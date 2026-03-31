@@ -79,3 +79,5 @@ urllib3
 watchfiles
 websockets
 yarl
+aiogram\ngoogle-genai\nlivekit-plugins-google
+redis

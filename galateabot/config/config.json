@@ -1,0 +1,22 @@
+{
+  "agents": {
+    "text": {
+      "llm_provider": "google",
+      "llm_model": "gemini-3.1-pro-preview",
+      "emotional_layer_model": "Pi-3.1",
+      "thinking_level": "medium"
+    },
+    "voice": {
+      "llm_provider": "google",
+      "llm_model": "gemini-2.5-flash-native-audio-preview-12-2025",
+      "voice_name": "Puck",
+      "temperature": 1.0,
+      "enable_affective_dialog": true
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true
+    }
+  }
+}
