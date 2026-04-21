@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: galatea-livekit
+Version: 0.1.0
+Summary: Galatea Voice Agent powered by LiveKit and ElevenLabs
+Requires-Python: >=3.12
+License-File: LICENSE
+Requires-Dist: livekit-agents
+Requires-Dist: livekit-plugins-elevenlabs
+Requires-Dist: livekit-plugins-openai
+Requires-Dist: livekit-plugins-anthropic
+Requires-Dist: livekit-plugins-google
+Requires-Dist: livekit-plugins-silero
+Requires-Dist: livekit-plugins-noise-cancellation
+Requires-Dist: python-dotenv
+Requires-Dist: requests
+Requires-Dist: aiohttp
+Dynamic: license-file

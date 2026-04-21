@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+galatea_livekit/__init__.py
+galatea_livekit/__main__.py
+galatea_livekit.egg-info/PKG-INFO
+galatea_livekit.egg-info/SOURCES.txt
+galatea_livekit.egg-info/dependency_links.txt
+galatea_livekit.egg-info/requires.txt
+galatea_livekit.egg-info/top_level.txt

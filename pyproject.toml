@@ -1,0 +1,23 @@
+[project]
+name = "galatea-livekit"
+version = "0.1.0"
+description = "Galatea Voice Agent powered by LiveKit and ElevenLabs"
+requires-python = ">=3.12"
+dependencies = [
+    "livekit-agents",
+    "livekit-plugins-elevenlabs",
+    "livekit-plugins-openai",
+    "livekit-plugins-anthropic",
+    "livekit-plugins-google",
+    "livekit-plugins-silero",
+    "livekit-plugins-noise-cancellation",
+    "python-dotenv",
+    "requests",
+    "aiohttp",
+]
+
+[tool.setuptools]
+packages = ["galatea_livekit"]
+
+[tool.uv]
+package = true

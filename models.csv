@@ -4,12 +4,13 @@ gpt-4o-mini,openai,true,openai,false
 dall-e-3,openai,false,openai,false
 whisper-1,openai,false,openai,false
 tts-1,openai,false,openai,false
-claude-3-5-sonnet-latest,anthropic,true,anthropic,false
-claude-3-5-haiku-latest,anthropic,true,anthropic,false
-claude-3-opus-latest,anthropic,true,anthropic,false
+claude-sonnet-4-6,anthropic,true,anthropic,false
+claude-haiku-4-5,anthropic,true,anthropic,false
+claude-opus-4-7,anthropic,true,anthropic,false
 eleven_multilingual_v2,elevenlabs,false,custom,false
 eleven_turbo_v2_5,elevenlabs,false,custom,false
-scribe_v1,elevenlabs,false,custom,false
+eleven_flash_v2_5,elevenlabs,false,custom,false
+scribe_v2_realtime,elevenlabs,false,custom,false
 dubbing_v1,elevenlabs,false,custom,false
 gemini-1.5-pro,google,true,gemini,false
 gemini-1.5-flash,google,true,gemini,false

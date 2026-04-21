@@ -15,7 +15,7 @@ class PathManager:
             root = Path.home() / ".galatea"
         else:
             # Local testing path as default fallback
-            root = Path("/Volumes/PHILIPS/1-repos/1-GalateaAI/Galatea-LiveKit/.galatea")
+            root = Path("/Volumes/PHILIPS/1-repos/1-GalateaAI/galatea_livekit/.galatea")
         
         root.mkdir(parents=True, exist_ok=True)
         return root

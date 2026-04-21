@@ -6,8 +6,8 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram import F
 
-from galateabot.bus.events import InboundMessage, OutboundMessage
-from galateabot.bus.queue import MessageBus
+from galatea_livekit.bus.events import InboundMessage, OutboundMessage
+from galatea_livekit.bus.queue import MessageBus
 
 logger = logging.getLogger("telegram-channel")
 

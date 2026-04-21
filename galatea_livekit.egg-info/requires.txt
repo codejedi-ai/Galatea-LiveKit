@@ -1,0 +1,10 @@
+livekit-agents
+livekit-plugins-elevenlabs
+livekit-plugins-openai
+livekit-plugins-anthropic
+livekit-plugins-google
+livekit-plugins-silero
+livekit-plugins-noise-cancellation
+python-dotenv
+requests
+aiohttp

@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 from livekit.agents import function_tool
-from galateabot.utils.bucket import BucketStore
+from galatea_livekit.utils.bucket import BucketStore
 
 @function_tool
 def bucket_put(bucket: str, key: str, data: str) -> str:

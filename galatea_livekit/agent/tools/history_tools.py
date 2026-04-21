@@ -1,7 +1,7 @@
 import uuid
 from livekit.agents import function_tool
-from galateabot.session.history import HistoryManager
-from galateabot.bus.events import HistoryRequest
+from galatea_livekit.session.history import HistoryManager
+from galatea_livekit.bus.events import HistoryRequest
 
 @function_tool
 def query_local_history(channel: str, chat_id: str, limit: int = 50) -> str:
