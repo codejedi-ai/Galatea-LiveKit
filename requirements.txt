@@ -31,12 +31,14 @@ jiter
 livekit
 livekit-agents
 livekit-api
+livekit-plugins-anthropic
 livekit-plugins-cartesia
+livekit-plugins-elevenlabs
+livekit-plugins-google
 livekit-plugins-noise-cancellation
 livekit-plugins-openai
 livekit-plugins-rime
 livekit-plugins-silero
-livekit-plugins-tavus
 livekit-plugins-turn-detector
 livekit-protocol
 MarkupSafe
@@ -79,5 +81,6 @@ urllib3
 watchfiles
 websockets
 yarl
-aiogram\ngoogle-genai\nlivekit-plugins-google
+google-genai
+aiogram
 redis

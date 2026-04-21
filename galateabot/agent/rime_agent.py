@@ -44,14 +44,17 @@ load_dotenv()
 logger = logging.getLogger("voice-agent")
 
 # Default config when --config is not passed. Natasha.json = first to test ElevenLabs (TTS + square-bracket expressive tags).
-DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "agent_template", "Natasha.json")
+DEFAULT_CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__), "agent_template", "Natasha.json"
+)
 
 # Global config loaded from JSON file (always set: either --config or default)
 LOADED_CONFIG = None
 
+
 def load_config_from_file(config_path: str) -> dict:
     """Load agent configuration from JSON file."""
-    with open(config_path, 'r', encoding='utf-8') as f:
+    with open(config_path, "r", encoding="utf-8") as f:
         config = json.load(f)
     logger.info(f"Loaded config from {config_path}: {config.get('name', 'unknown')}")
     return config
@@ -139,7 +142,11 @@ def _tts_tag_block_for_cfg(cfg: dict) -> str:
 
 def build_agent_instructions(cfg: dict) -> str:
     """Build full LLM instructions from config: prompt + declaration of humanity (when anthropomorphic) + TTS expressive tags (from tts.provider)."""
-    raw_prompt = cfg.get("personality_prompt") or cfg.get("prompt") or "You are a helpful assistant."
+    raw_prompt = (
+        cfg.get("personality_prompt")
+        or cfg.get("prompt")
+        or "You are a helpful assistant."
+    )
     base = resolve_prompt(raw_prompt)
     if cfg.get("is_anthropomorphic") in (True, "true", "yes", 1):
         base = base.rstrip() + "\n\n" + DECLARATION_OF_HUMANITY.strip()
@@ -168,9 +175,16 @@ def create_agent_llm(cfg: dict):
     if provider == "google":
         return google.LLM(model=model)
     if provider == "anthropic":
-        api_key = (os.getenv("ANTHROPIC_API_KEY") or os.getenv("anthropic_api_key") or "").strip().strip('"').strip("'")
+        api_key = (
+            (os.getenv("ANTHROPIC_API_KEY") or os.getenv("anthropic_api_key") or "")
+            .strip()
+            .strip('"')
+            .strip("'")
+        )
         if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY is not set. Set it in .env for Anthropic/Claude.")
+            raise ValueError(
+                "ANTHROPIC_API_KEY is not set. Set it in .env for Anthropic/Claude."
+            )
         os.environ["ANTHROPIC_API_KEY"] = api_key
         return anthropic.LLM(model=model)
     # DeepSeek uses a dedicated API base URL and its own API key (OpenAI-compatible API)
@@ -186,6 +200,7 @@ def create_agent_llm(cfg: dict):
     # Hugging Face model library (transformers) for local LLM
     if provider == "huggingface":
         from plugins.hf_llm import HFLLM
+
         return HFLLM(model=model)
     # openai or any openai-compatible API (lm_studio, etc.) when url is set
     if base_url:
@@ -198,11 +213,17 @@ def prewarm(proc: JobProcess):
     cfg = LOADED_CONFIG or {}
     vad_cfg = cfg.get("vad") or {}
     vad_provider = (vad_cfg.get("provider") or "silero").lower()
-    vad_model = vad_cfg.get("model")  # e.g. "silero_vad" (default bundled ONNX); or use onnx_file_path for custom
-    onnx_file_path = vad_cfg.get("onnx_file_path") or vad_cfg.get("url")  # optional path to custom ONNX
+    vad_model = vad_cfg.get(
+        "model"
+    )  # e.g. "silero_vad" (default bundled ONNX); or use onnx_file_path for custom
+    onnx_file_path = vad_cfg.get("onnx_file_path") or vad_cfg.get(
+        "url"
+    )  # optional path to custom ONNX
     # For now: huggingface VAD not yet implemented; silero is used for all. Config is in place for future HF VAD.
     if vad_provider == "huggingface":
-        logger.info("VAD config: provider=huggingface (using silero until HF VAD plugin is added)")
+        logger.info(
+            "VAD config: provider=huggingface (using silero until HF VAD plugin is added)"
+        )
     # Silero VAD: default model is bundled silero_vad.onnx; pass onnx_file_path only if custom path is set
     load_kwargs = {}
     if onnx_file_path:
@@ -211,12 +232,10 @@ def prewarm(proc: JobProcess):
         logger.info("VAD config: provider=%s model=%s", vad_provider, vad_model)
     proc.userdata["vad"] = silero.VAD.load(**load_kwargs)
 
+
 class RimeAssistant(Agent):
     def __init__(self, prompt: str) -> None:
         super().__init__(instructions=prompt)
-
-
-
 
 
 async def entrypoint(ctx: JobContext):
@@ -228,7 +247,9 @@ async def entrypoint(ctx: JobContext):
     # Config is always set (default or --config)
     cfg = LOADED_CONFIG
     voice_name = cfg.get("name", "custom")
-    logger.info(f"Running voice agent with config: {voice_name} for participant {participant.identity}")
+    logger.info(
+        f"Running voice agent with config: {voice_name} for participant {participant.identity}"
+    )
 
     # TTS: { provider, model, url, voice_options: { ... } }; voice_options holds provider-specific options
     tts_cfg = cfg.get("tts") or {}
@@ -236,8 +257,17 @@ async def entrypoint(ctx: JobContext):
         tts_cfg = {"provider": tts_cfg, "model": None, "url": None}
     # Backward compat: top-level voice_options or flat keys on tts
     vo = tts_cfg.get("voice_options") or cfg.get("voice_options") or {}
-    vo = {**vo, **{k: v for k, v in tts_cfg.items() if k not in ("provider", "model", "url", "voice_options")}}
-    tts_provider = (tts_cfg.get("provider") or cfg.get("tts_type") or cfg.get("provider") or "rime").lower()
+    vo = {
+        **vo,
+        **{
+            k: v
+            for k, v in tts_cfg.items()
+            if k not in ("provider", "model", "url", "voice_options")
+        },
+    }
+    tts_provider = (
+        tts_cfg.get("provider") or cfg.get("tts_type") or cfg.get("provider") or "rime"
+    ).lower()
     tts_model = tts_cfg.get("model") or vo.get("model_id")
     tts_url = tts_cfg.get("url")
 
@@ -257,17 +287,28 @@ async def entrypoint(ctx: JobContext):
         )
     elif tts_provider == "huggingface":
         from plugins.hf_tts import HFTTS
+
         voice_tts = HFTTS(
             model=tts_model or vo.get("model", "microsoft/speecht5_tts"),
-            speaker_id=vo.get("speaker_id", 0) if vo.get("speaker_id") is not None else None,
+            speaker_id=vo.get("speaker_id", 0)
+            if vo.get("speaker_id") is not None
+            else None,
         )
     elif tts_provider == "elevenlabs":
-        el_opts = {k: v for k, v in vo.items() if k not in ("provider", "model", "url", "model_id", "voice_id")}
+        el_opts = {
+            k: v
+            for k, v in vo.items()
+            if k not in ("provider", "model", "url", "model_id", "voice_id")
+        }
         model = tts_model or vo.get("model_id", "eleven_multilingual_v2")
         voice_id = vo.get("voice_id")
         voice_tts = ElevenLabsTTS(model=model, voice_id=voice_id, **el_opts)
     elif tts_provider == "kokoro":
-        base_url = tts_url or vo.get("base_url") or os.getenv("KOKORO_BASE_URL", "http://localhost:8880/v1")
+        base_url = (
+            tts_url
+            or vo.get("base_url")
+            or os.getenv("KOKORO_BASE_URL", "http://localhost:8880/v1")
+        )
         voice_tts = KokoroTTS(
             base_url=base_url,
             api_key=vo.get("api_key", "not-needed"),
@@ -300,7 +341,10 @@ async def entrypoint(ctx: JobContext):
     if intro_gen_prompt:
         try:
             from intro_gen import generate_intro
-            gen_model = greeting.get("intro_generation_model") or os.getenv("LLM_MODEL", "Pi-3.1")
+
+            gen_model = greeting.get("intro_generation_model") or os.getenv(
+                "LLM_MODEL", "Pi-3.1"
+            )
             gen_temp = greeting.get("gen_temperature", 0.9)
             generated = await generate_intro(
                 intro_gen_prompt,
@@ -320,7 +364,9 @@ async def entrypoint(ctx: JobContext):
     if stt_provider == "silero":
         voice_stt = SileroSTT(language=stt_cfg.get("language") or stt_model or "en")
     elif stt_provider == "whisper":
-        base_url = stt_url or os.getenv("STT_WHISPER_BASE_URL", "http://localhost:8000/v1")
+        base_url = stt_url or os.getenv(
+            "STT_WHISPER_BASE_URL", "http://localhost:8000/v1"
+        )
         voice_stt = openai.STT(model=stt_model or "whisper-1", base_url=base_url)
     elif stt_provider == "smallestai":
         voice_stt = SmallestSTT(
@@ -348,14 +394,11 @@ async def entrypoint(ctx: JobContext):
         metrics.log_metrics(ev.metrics)
         usage_collector.collect(ev.metrics)
 
-
-
     async def log_usage():
         summary = usage_collector.get_summary()
         logger.info(f"Usage: {summary}")
 
     ctx.add_shutdown_callback(log_usage)
-
 
     agent = RimeAssistant(prompt=llm_prompt)
 
@@ -369,6 +412,7 @@ async def entrypoint(ctx: JobContext):
     )
 
     await session.say(intro_phrase)
+
 
 # Default Hugging Face models used when provider is huggingface (downloaded by download-files). STT removed; use silero or openai.
 DEFAULT_HF_TTS_MODEL = "microsoft/speecht5_tts"
@@ -431,7 +475,11 @@ def _run_download_files() -> None:
     if not model_ids:
         logger.info("No Hugging Face models found in configs.")
         return
-    logger.info("Downloading %d Hugging Face model(s) to local cache: %s", len(model_ids), sorted(model_ids))
+    logger.info(
+        "Downloading %d Hugging Face model(s) to local cache: %s",
+        len(model_ids),
+        sorted(model_ids),
+    )
     _download_hf_models(model_ids)
     logger.info("download-files completed.")
 
@@ -439,6 +487,7 @@ def _run_download_files() -> None:
 def _parse_config_and_run():
     """Parse --config from argv, set LOADED_CONFIG, then run the app. Defaults to config in project folder if omitted."""
     import sys
+
     if "download-files" in sys.argv:
         sys.argv.remove("download-files")
         _run_download_files()
@@ -462,6 +511,7 @@ def _parse_config_and_run():
             prewarm_fnc=prewarm,
         ),
     )
+
 
 if __name__ == "__main__":
     _parse_config_and_run()
